@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Data implements Serializable{
 	private static final long serialVersionUID = 2218706848770106240L;
-	public static enum DataType{FIRST,ACCEPT,Update,GAMESTART,REJECT,GAMEOVER};
+	public static enum DataType{FIRST,ACCEPT,UPDATE,WAIT,START,REJECT,GAMEOVER};
 	private DataType datatype;
 	public int x;
 	private int y;
@@ -14,13 +14,18 @@ public class Data implements Serializable{
 	private int direction;
 	private int hp;
 	private boolean isSingle;
-	private int gameroomNum;
-	public Data(){
-		this.isSingle = true;
-		this.gameroomNum = 1;
+	private int roomNum;
+	public void setisSingle(boolean flag){
+		this.isSingle = flag;
 	}
 	public boolean getisSingle(){
 		return isSingle;
+	}
+	public void setRoomNum(int num){
+		roomNum = num;
+	}
+	public int getRoomNum(){
+		return roomNum;
 	}
 	public int getX(){
 		return x;

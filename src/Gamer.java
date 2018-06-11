@@ -13,14 +13,18 @@ public class Gamer extends Thread{
     private static int PORT = 3000;
     private Queue<Data> dataQ;
     private Queue<Data> recieveData;
-
-    public static void main(String[] args){
+    private boolean singleGame;
+    private int roomNum;
+    public static void main(String[] args)throws Exception{
         Gamer g = new Gamer();
+        g.setSingleGame(false);
         g.start();
         Data d = new Data();
+        d.setDataType(Data.DataType.UPDATE);
+        Thread.sleep(2000);
         //System.out.println(d.getisSingle());
-        //d.setX(2);
-        //g.updateData(d);
+        d.setX(2);
+        g.updateData(d);
         
     }
     public Gamer(){
@@ -48,11 +52,28 @@ public class Gamer extends Thread{
                 
                 Data first = new Data();
                 first.setDataType(Data.DataType.FIRST);
+                first.setisSingle(singleGame);
+                first.setRoomNum(roomNum);
                 System.out.println("test");
                 oos.reset();
                 oos.writeObject(first);
                 
 
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            try{
+                ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+                Data temp;
+                temp = (Data)ois.readUnshared();
+                if(temp.getDataType() == Data.DataType.WAIT){
+                    while(true){
+                        temp = (Data)ois.readUnshared();
+                        if( temp.getDataType() == Data.DataType.START)
+                            break;
+                    }
+                }
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -89,6 +110,7 @@ public class Gamer extends Thread{
             outputThread.start();
             //get Server data
             try{
+
                 while(true){
 
                     msg = (Data)ois.readUnshared();
@@ -154,6 +176,10 @@ public class Gamer extends Thread{
     public void waitRecieveData() throws Exception{
         recieveData.wait();
     }
-
-
+    public void setSingleGame(boolean flag){
+        this.singleGame = flag;
+    }
+    public void setRoomNum(int num){
+        this.roomNum = num;
+    }
 }
