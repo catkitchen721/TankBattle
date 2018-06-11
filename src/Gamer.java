@@ -18,9 +18,9 @@ public class Gamer extends Thread{
         Gamer g = new Gamer();
         g.start();
         Data d = new Data();
-        System.out.println(d.getisSingle());
-        d.setX(2);
-        g.updateData(d);
+        //System.out.println(d.getisSingle());
+        //d.setX(2);
+        //g.updateData(d);
         
     }
     public Gamer(){
@@ -39,12 +39,23 @@ public class Gamer extends Thread{
             
             client = new Socket(HOST,PORT);
             System.out.println("Connect");
-            ois = new ObjectInputStream(client.getInputStream());
-            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+
+            //ois = new ObjectInputStream(client.getInputStream());
             Data msg = new Data();
-            Data first = new Data();
-            first.setDataType(Data.DataType.FIRST);
-            oos.writeUnshared(first);
+            try{
+
+                ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+                
+                Data first = new Data();
+                first.setDataType(Data.DataType.FIRST);
+                System.out.println("test");
+                oos.reset();
+                oos.writeObject(first);
+                
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             // continue to ouput the data if dataQ is not empty
             Thread outputThread = new Thread(new Runnable(){
                 @Override

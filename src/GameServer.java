@@ -30,8 +30,20 @@ public class GameServer extends Thread{
             clientList = new ArrayList<clientInfo>();
             while(true){
                 //accept the client socket
-                Data recieveData;
+                Data recieveData = new Data();
                 Socket client = serverSock.accept();
+                
+                try{
+                    ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+                    recieveData = (Data)ois.readObject();
+                    System.out.println("Recieve first data");
+                    System.out.println(recieveData.getisSingle());
+                    System.out.println(recieveData.getDataType());
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
+
                 ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
                 //ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
                 /*
@@ -64,6 +76,8 @@ public class GameServer extends Thread{
                 synchronized(clientList){
                     clientList.add(new clientInfo(client,oos));
                 }
+
+
                 GameRoom new_room = new GameRoom(clientList.get(index));
                 new_room.start();
                 index++;
@@ -205,6 +219,7 @@ class GameRoom extends Thread{
                                     data = p1Data.poll();
                                 }
                                 player1.getOos().reset();
+                                //
                                 player1.getOos().writeUnshared(data);
                                 
                             }
