@@ -9,6 +9,7 @@ public class Menu extends Canvas{
 	
 	public static void main(String[] args) {
 		
+		
 		Display display = new Display();
 
 	}
