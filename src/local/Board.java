@@ -1,14 +1,18 @@
 package local;
 
 import javax.swing.JFrame;
+import javax.swing.Timer;
 
 import local.Status.Direction;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Board extends JFrame implements KeyListener {
+
+public class Board extends JFrame implements KeyListener, ActionListener {
 	public static final int FRAME_WIDTH = 1200;
 	public static final int FRAME_HEIGHT = 1000;
 	public static final int BOX_WIDTH = 50;
@@ -17,10 +21,13 @@ public class Board extends JFrame implements KeyListener {
 	public Display display;
 	public Player player1;
 	public Player player2;
+	private Timer timer;
+
 
 	public Board() {
 		display = new Display();
 		add(display);
+		player1 = display.player1;
 		
 		loadMap();
 		
@@ -32,6 +39,10 @@ public class Board extends JFrame implements KeyListener {
 		
 		addKeyListener(this);
 		display.addKeyListener(this);
+		
+		
+		timer = new Timer(15, this);
+		timer.start();
 		
 	}
 	
@@ -51,8 +62,8 @@ public class Board extends JFrame implements KeyListener {
 	}
 	
 	public boolean isMovable(Player player, Direction d) {
-		int x = display.player1.data.getX();
-		int y = display.player1.data.getY();
+		int x = player1.data.getX();
+		int y = player1.data.getY();
 
 		if(d == Direction.UP)
 		{
@@ -70,7 +81,37 @@ public class Board extends JFrame implements KeyListener {
 		{
 			x += BOX_WIDTH;
 		}
-		int mapi = x / BOX_WIDTH, mapj = y/ BOX_WIDTH;
+		int mapi = (x-10) / BOX_WIDTH, mapj = (y -10) / BOX_WIDTH;
+		int mapValue = Character.getNumericValue(map[mapj][mapi]);
+		
+		if(mapValue == 2) {
+			return false;
+		}
+		else return true;
+	}
+	
+	public boolean isMovable(Bullet bullet) { 
+		int x = bullet.data.getX();
+		int y = bullet.data.getY();
+		Direction d = bullet.data.getDirect();
+
+		if(d == Direction.UP)
+		{
+			y -= BOX_WIDTH;
+		}
+		else if(d == Direction.DOWN)
+		{
+			y += BOX_WIDTH;
+		}
+		else if(d == Direction.LEFT)
+		{
+			x -= BOX_WIDTH;
+		}
+		else if(d == Direction.RIGHT)
+		{
+			x += BOX_WIDTH;
+		}
+		int mapi = (x-10) / BOX_WIDTH, mapj = (y -10) / BOX_WIDTH;
 		int mapValue = Character.getNumericValue(map[mapj][mapi]);
 		
 		if(mapValue == 2) {
@@ -82,35 +123,53 @@ public class Board extends JFrame implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_W) {
 			if(isMovable(player1, Direction.UP)) {
-				display.player1.move(Direction.UP);
+				player1.move(Direction.UP);
 				display.repaint();
 			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_S) {
 			if(isMovable(player1, Direction.DOWN)) {
-				display.player1.move(Direction.DOWN);
+				player1.move(Direction.DOWN);
 				display.repaint();
 			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_D) {
 			if(isMovable(player1, Direction.RIGHT)) {
-				display.player1.move(Direction.RIGHT);
+				player1.move(Direction.RIGHT);
 				display.repaint();
 			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_A) {
 			if(isMovable(player1, Direction.LEFT)) {
-				display.player1.move(Direction.LEFT);
+				player1.move(Direction.LEFT);
 				display.repaint();
 			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_Q) {
 			System.exit(0);
 		}
+		else if (e.getKeyCode() == KeyEvent.VK_J) {
+			player1.shoot();
+		}
 
 	}
 
 	public void keyReleased(KeyEvent e) {
+	}
+	
+    public void actionPerformed(ActionEvent e) {
+    	bulletMove(player1);
+    	display.repaint();
+    }
+    
+    public void bulletMove(Player player) {
+		for(Bullet element : player.getBullet()) {
+			if(isMovable(element)) 
+				element.move();
+			else
+				element.setVisible(false);
+				
+		}
 	}
 	
 //	private class playerAction implements KeyListener {
