@@ -12,6 +12,8 @@ public class Board extends JFrame implements KeyListener {
 	public static final int FRAME_WIDTH = 1200;
 	public static final int FRAME_HEIGHT = 1000;
 	public static final int BOX_WIDTH = 50;
+	public int[][] map = null;
+
 	public Display display;
 	public Player player1;
 	public Player player2;
@@ -20,6 +22,8 @@ public class Board extends JFrame implements KeyListener {
 		display = new Display();
 		add(display);
 		
+		loadMap();
+		
 		pack();
 		setResizable(false);
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -27,6 +31,7 @@ public class Board extends JFrame implements KeyListener {
 		setLocationRelativeTo(null);
 		
 		addKeyListener(this);
+		display.addKeyListener(this);
 		
 	}
 	
@@ -34,32 +39,78 @@ public class Board extends JFrame implements KeyListener {
 		
 	}
 	public void keyTyped(KeyEvent e) {
-
+		
 	}
+	
+	public void loadMap() {
+		try {
+			map = ReadData.readFromFile("resource/map.txt");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean isMovable(Player player, Direction d) {
+		int x = display.player1.data.getX();
+		int y = display.player1.data.getY();
+
+		if(d == Direction.UP)
+		{
+			y -= BOX_WIDTH;
+		}
+		else if(d == Direction.DOWN)
+		{
+			y += BOX_WIDTH;
+		}
+		else if(d == Direction.LEFT)
+		{
+			x -= BOX_WIDTH;
+		}
+		else if(d == Direction.RIGHT)
+		{
+			x += BOX_WIDTH;
+		}
+		int mapi = x / BOX_WIDTH, mapj = y/ BOX_WIDTH;
+		int mapValue = Character.getNumericValue(map[mapj][mapi]);
+		
+		if(mapValue == 2) {
+			return false;
+		}
+		else return true;
+	}
+	
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_W) {
-			System.out.println("Right key pressed");
-			display.player1.move(Direction.UP);
-			display.repaint();
+			if(isMovable(player1, Direction.UP)) {
+				display.player1.move(Direction.UP);
+				display.repaint();
+			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_S) {
-			display.player1.move(Direction.DOWN);
-			display.repaint();
+			if(isMovable(player1, Direction.DOWN)) {
+				display.player1.move(Direction.DOWN);
+				display.repaint();
+			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_D) {
-			display.player1.move(Direction.RIGHT);
-			display.repaint();
+			if(isMovable(player1, Direction.RIGHT)) {
+				display.player1.move(Direction.RIGHT);
+				display.repaint();
+			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_A) {
-			display.player1.move(Direction.LEFT);
-			display.repaint();
+			if(isMovable(player1, Direction.LEFT)) {
+				display.player1.move(Direction.LEFT);
+				display.repaint();
+			}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_Q) {
+			System.exit(0);
 		}
 
 	}
 
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_W) {
-		}
 	}
 	
 //	private class playerAction implements KeyListener {
