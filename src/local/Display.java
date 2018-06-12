@@ -1,20 +1,13 @@
 package local;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.awt.Graphics2D;
-import javax.swing.ImageIcon;
-
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 public class Display extends Canvas{
 	
@@ -22,41 +15,24 @@ public class Display extends Canvas{
 	public static final int FRAME_HEIGHT = 1000;
 	public static final int BOX_WIDTH = 50;
 	
-	public boolean tankAppearFlag = false;
 	public int[][] map = null;
 
 	private BufferedImage grass;
 	private BufferedImage wall;
 	private BufferedImage circle;
 	
+	public Player player1;
+	public boolean player1AppearFlag = false;
+
+	
 	public Display()
 	{	
-		JFrame frame = new JFrame();	//wait for new class extending JFrame
-		JLabel lbPlayer1 = new JLabel("Player 1");
-		
-		lbPlayer1.setSize(200, 50);
-		lbPlayer1.setLocation(1000, 50);
-		frame.add(lbPlayer1);
-		loadImages();
 
+		loadImages();
 		
-		frame.add(this);
-		frame.pack();
-		frame.setResizable(false);
-		frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
+		addPlayer1();
+		repaint();
 		
-		try {
-			tankAppearFlag = true;
-			this.update(this.getGraphics());
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
-		
-		
-		frame.setVisible(true);
 	}
 	
 	public void paint(Graphics g)
@@ -73,7 +49,16 @@ public class Display extends Canvas{
 			e.printStackTrace();
 		}
 		
-        Graphics2D g2d = (Graphics2D) g;
+        drawMap(g);
+        
+//		if(tankAppearFlag)
+//		{
+//			g.drawImage(circle, 250, 100, BOX_WIDTH, BOX_WIDTH, null);
+//		}
+	}
+	
+	public void drawMap(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
 		for(int j=0; j<19; j++)
 		{
 			for(int i=0; i<19; i++)
@@ -85,30 +70,26 @@ public class Display extends Canvas{
 				}
 				else if(map[j][i] == '1')
 				{
-					//g.setColor(new Color(0xff, 0x8c, 0x00));
 					g2d.drawImage(grass, 10 + i * BOX_WIDTH, 10 + j * BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, null);
 				}
 				else if(map[j][i] == '2')
 				{
-					//g.setColor(new Color(0x44, 0x44, 0x44));
 					g2d.drawImage(wall, 10 + i * BOX_WIDTH, 10 + j * BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, null);
 				}
 				else;
 				
-				//g.fillRect(10 + i * BOX_WIDTH, 10 + j * BOX_WIDTH, BOX_WIDTH, BOX_WIDTH);
 			}
 		}
-		if(tankAppearFlag)
-		{
-			g2d.drawImage(circle, 10 + 5 * BOX_WIDTH, 10 + 15 * BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, null);
-//			try {
-//				g.drawImage(ImageIO.read(new File("resource/circle.png")), 10 + 5 * BOX_WIDTH, 10 + 15 * BOX_WIDTH, BOX_WIDTH, BOX_WIDTH, null);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
+		
+		if(player1AppearFlag) {
+			drawPlayer(g, player1);
 		}
 	}
-	
+	public void drawPlayer(Graphics g, Player player) {
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.drawImage(circle, player.data.getX(), player.data.getY(), BOX_WIDTH, BOX_WIDTH, null);
+
+	}
 	public void loadImages() {
 		try {
 			grass = ImageIO.read(new File("resource/grass.jpg"));
@@ -119,14 +100,12 @@ public class Display extends Canvas{
 			e.printStackTrace();
 		}
 	}
-	
-	public void update(Graphics g)
-	{
-		this.paint(g);
-	}
-	
-	public void addTank(Tank tank)
-	{
 		
+	public void addPlayer1()
+	{
+		player1AppearFlag = true;
+		player1 = new Player();
+		player1.data.setX(250);
+		player1.data.setY(100);
 	}
 }

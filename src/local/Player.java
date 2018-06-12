@@ -3,7 +3,8 @@ package local;
 import local.Status.Direction;
 
 public class Player extends Tank{
-
+	public static final int PER_MOVE = 50;
+	
 	public Player()
 	{
 		super();
@@ -17,19 +18,20 @@ public class Player extends Tank{
 		
 		if(d == Direction.UP)
 		{
-			this.data.setY(this.data.getY() + 1);
+			this.data.setY(this.data.getY() - PER_MOVE);
+			System.out.println(this.data.getY());
 		}
 		else if(d == Direction.DOWN)
 		{
-			this.data.setY(this.data.getY() - 1);
+			this.data.setY(this.data.getY() + PER_MOVE);
 		}
 		else if(d == Direction.LEFT)
 		{
-			this.data.setX(this.data.getX() - 1);
+			this.data.setX(this.data.getX() - PER_MOVE);
 		}
 		else if(d == Direction.RIGHT)
 		{
-			this.data.setX(this.data.getX() + 1);
+			this.data.setX(this.data.getX() + PER_MOVE);
 		}
 		else;
 		
