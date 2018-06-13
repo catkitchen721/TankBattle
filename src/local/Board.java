@@ -22,7 +22,14 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 	public Player player1;
 	public Player player2;
 	private Timer timer;
-
+	
+	private long keyInitialTime;
+	private boolean allowKeypress;
+	
+	public boolean playerForwarding;
+	public boolean playerBacking;
+	public boolean playerRighting;
+	public boolean playerLefting;
 
 	public Board() {
 		display = new Display();
@@ -40,10 +47,16 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		addKeyListener(this);
 		display.addKeyListener(this);
 		
-		
-		timer = new Timer(50, this);
+		timer = new Timer(150, this);
 		timer.start();
 		
+		allowKeypress = false;
+		keyInitialTime = System.currentTimeMillis();
+		
+		playerForwarding = false;
+		playerBacking = false;
+		playerRighting = false;
+		playerLefting = false;
 	}
 	
 	public void addTank() {
@@ -121,45 +134,64 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 	}
 	
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_W) {
-			if(isMovable(player1, Direction.UP)) {
-				player1.move(Direction.UP);
-				display.update(display.getGraphics());
+		
+		allowKeypress = (System.currentTimeMillis() - keyInitialTime > 50)? true: false;
+		keyInitialTime = System.currentTimeMillis();
+		
+		if(allowKeypress)
+		{
+			if (e.getKeyCode() == KeyEvent.VK_W) {
+				if(isMovable(player1, Direction.UP)) {
+					playerForwarding = true;
+				}
 			}
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_S) {
-			if(isMovable(player1, Direction.DOWN)) {
-				player1.move(Direction.DOWN);
-				display.update(display.getGraphics());
+			else if (e.getKeyCode() == KeyEvent.VK_S) {
+				if(isMovable(player1, Direction.DOWN)) {
+					playerBacking = true;
+				}
 			}
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_D) {
-			if(isMovable(player1, Direction.RIGHT)) {
-				player1.move(Direction.RIGHT);
-				display.update(display.getGraphics());
+			else if (e.getKeyCode() == KeyEvent.VK_D) {
+				if(isMovable(player1, Direction.RIGHT)) {
+					playerRighting = true;
+				}
 			}
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_A) {
-			if(isMovable(player1, Direction.LEFT)) {
-				player1.move(Direction.LEFT);
-				display.update(display.getGraphics());
+			else if (e.getKeyCode() == KeyEvent.VK_A) {
+				if(isMovable(player1, Direction.LEFT)) {
+					playerLefting = true;
+				}
 			}
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_Q) {
-			System.exit(0);
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_J) {
-			player1.shoot();
+			else if (e.getKeyCode() == KeyEvent.VK_Q) {
+				System.exit(0);
+			}
+			else if (e.getKeyCode() == KeyEvent.VK_J) {
+				player1.shoot();
+			}
 		}
 
 	}
 
 	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_W) {
+			playerForwarding = false;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_S) {
+			playerBacking = false;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_D) {
+			playerRighting = false;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_A) {
+			playerLefting = false;
+		}
 	}
 	
     public void actionPerformed(ActionEvent e) {
     	bulletMove(player1);
     	display.update(display.getGraphics());
+    	if(playerForwarding && isMovable(player1, Direction.UP)) playerMoving(Direction.UP);
+    	if(playerBacking && isMovable(player1, Direction.DOWN)) playerMoving(Direction.DOWN);
+    	if(playerLefting && isMovable(player1, Direction.LEFT)) playerMoving(Direction.LEFT);
+    	if(playerRighting && isMovable(player1, Direction.RIGHT)) playerMoving(Direction.RIGHT);
     }
     
     public void bulletMove(Player player) {
@@ -171,6 +203,12 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 				
 		}
 	}
+    
+    public void playerMoving(Direction d)
+    {
+    	player1.move(d);
+		display.update(display.getGraphics());
+    }
 	
 //	private class playerAction implements KeyListener {
 //		@Override
