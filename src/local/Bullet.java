@@ -9,7 +9,7 @@ public class Bullet {
 	public static final int SPEED = 20;
 	//public int player_num;
 	private boolean visible = true;
-	
+	public boolean ingame ;
 
 	
 	Bullet(int x, int y, Player player) {
@@ -18,6 +18,7 @@ public class Bullet {
 		data.setX(x);
 		data.setY(y);
 		data.setDirect(player.data.getDirect());
+		this.ingame = true;
 	}
 	
 	public void move() {

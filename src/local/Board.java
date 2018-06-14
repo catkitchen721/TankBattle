@@ -60,10 +60,11 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 							}
 						}
 						temp = g1.recieveData.poll();
-						System.out.println("P2DATA");
 						player2.update(temp);
-						if(temp.getShoot())
+						System.out.println(temp.getShoot());
+						if(temp.getShoot()) {
 							player2.shoot();
+						}
 					}
 				}
 			}
@@ -234,19 +235,23 @@ public class Board extends JFrame implements KeyListener, ActionListener {
     	if(playerLefting && isMovable(player1, player2, Direction.LEFT)) playerMoving(Direction.LEFT);
     	if(playerRighting && isMovable(player1,player2,  Direction.RIGHT)) playerMoving(Direction.RIGHT);
     	display.update(display.getGraphics());
+    	player1.data.setShoot(false);
     }
   
     public void bulletMove(Player player1, Player player2) {
 		for(Bullet element : player1.getBullet()) {
-			if(element.getBound().intersects(player2.getBound())) {
+			if(element.getBound().intersects(player2.getBound()) && element.ingame) {
 				System.out.println("got hit");
 				player2.getHit();
 				element.setVisible(false);
+				element.ingame = false;
 			}
 			if(isMovable(element)) 
 				element.move();
-			else
+			else {
 				element.setVisible(false);
+				element.ingame = false;
+			}
 				
 		}
 	}
