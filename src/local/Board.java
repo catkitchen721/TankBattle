@@ -31,13 +31,36 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 	public boolean playerBacking;
 	public boolean playerRighting;
 	public boolean playerLefting;
-
+	public Gamer g1;
+	public Data p2Data;
 	public Board() {
 		display = new Display();
-		add(display);
-		player1 = display.player1;
-		player2 = display.player2;
+		p2Data = new Data();
 		
+		add(display);
+		g1 = new Gamer();
+		g1.start();
+		player1 = display.player1;
+		if(!g1.isWait)
+			display.addPlayer2();
+//			player2 = display.player2;
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while(true) {
+					while(g1.p2DataisEmpty()) {
+						try {
+							g1.waitRecieveData();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					p2Data = g1.updateFrame();
+					player2.update(p2Data);
+				}
+			}
+		});
 		loadMap();
 		
 		pack();
@@ -194,6 +217,7 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 	}
 	
     public void actionPerformed(ActionEvent e) {
+    	g1.updateData(player1.data);
     	bulletMove(player1, player2);
     	display.update(display.getGraphics());
     	if(playerForwarding && isMovable(player1, player2, Direction.UP)) playerMoving(Direction.UP);

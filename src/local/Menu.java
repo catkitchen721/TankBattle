@@ -14,11 +14,12 @@ public class Menu {
 			public void run()
 			{
 				Board board = new Board();
+				board.setVisible(true);
 			}
 		});
 		frameThread.start();
-		Board board = new Board();
-		board.setVisible(true);
+//		Board board = new Board();
+//		board.setVisible(true);
 
 	}
 

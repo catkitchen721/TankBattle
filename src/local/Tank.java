@@ -22,7 +22,7 @@ public abstract class Tank {
 	public void update(Data newData)
 	{
 		this.data.setAll(
-				DataType.Update, 
+				DataType.UPDATE, 
 				newData.getX(), 
 				newData.getY(), 
 				newData.getShoot(), 

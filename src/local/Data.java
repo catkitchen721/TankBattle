@@ -1,28 +1,46 @@
 package local;
 
-import java.io.*;
-import java.util.*;
+
+
 
 import local.Status.Direction;
 
-public class Data{
-	public static enum DataType{ACCEPT,Update,GAMESTART,REJECT,GAMEOVER};
+import java.io.Serializable;
+
+
+public class Data implements Serializable{
+	private static final long serialVersionUID = 2218706848770106240L;
+	public static enum DataType{FIRST,ACCEPT,UPDATE,WAIT,START,REJECT,GAMEOVER};
 	public int player_num;
 	private DataType datatype;
 	private int x;
 	private int y;
-	private boolean isShoot;
+	private boolean shoot;
 	private Direction direction;
 	private int hp;
+	private boolean isSingle;
+	private int roomNum;
 	
 	public Data()
 	{
-		this.datatype = DataType.GAMESTART;
+		this.datatype = DataType.START;
 		this.x = 0;
 		this.y = 0;
-		this.isShoot = false;
+		this.shoot = false;
 		this.direction = Status.Direction.UP;
 		this.hp = 100;
+	}
+	public void setisSingle(boolean flag){
+		this.isSingle = flag;
+	}
+	public boolean getisSingle(){
+		return isSingle;
+	}
+	public void setRoomNum(int num){
+		roomNum = num;
+	}
+	public int getRoomNum(){
+		return roomNum;
 	}
 	
 	public int getX(){
@@ -32,13 +50,17 @@ public class Data{
 		return y;
 	}
 	public boolean getShoot(){
-		return isShoot;
+		return shoot;
 	}
 	public Direction getDirect(){
 		return direction;
 	}
 	public int getHp(){
 		return hp;
+	}
+	
+	public DataType getDataType(){
+		return datatype;
 	}
 	
 	public void setDataType(DataType d){
@@ -51,7 +73,7 @@ public class Data{
 		this.y = y;
 	}
 	public void setShoot(boolean shoot){
-		this.isShoot = shoot;
+		this.shoot = shoot;
 	}
 	public void setDirect(Direction direction){
 		this.direction = direction;
@@ -65,7 +87,7 @@ public class Data{
 		this.datatype = d;
 		this.x = x;
 		this.y = y;
-		this.isShoot = shoot;
+		this.shoot = shoot;
 		this.direction = direction;
 		this.hp = hp;
 	}

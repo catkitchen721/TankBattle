@@ -8,12 +8,13 @@ import java.util.ArrayList;
 public class Player extends Tank{
 	
     private List<Bullet> bullets;
-
+    private Gamer p1;
 	public Player(int num)
 	{
 		super();
 		data.player_num = num;
 		System.out.println("One player created.");
+		
 		bullets = new ArrayList<>();
 	}
 	
@@ -43,7 +44,6 @@ public class Player extends Tank{
 			this.data.setDirect(Direction.RIGHT);
 		}
 		else;
-		
 		this.update(this.data);
 	}
 	
