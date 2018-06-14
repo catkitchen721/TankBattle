@@ -1,4 +1,4 @@
-package Player;
+package local;
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -25,6 +25,17 @@ public class Gamer extends Thread{
         //System.out.println(d.getisSingle());
         d.setX(2);
         g.updateData(d);
+        Data temp;
+        synchronized( g.recieveData ){
+            while((temp = g.updateFrame())==null){
+                g.waitRecieveData();
+            }
+            System.out.println(temp.getX());
+        }
+        
+
+
+        
         
     }
     public Gamer(){
@@ -35,6 +46,7 @@ public class Gamer extends Thread{
     }
     @Override
     public void run(){
+
         if(ClientClosed == true)
             return;
 
@@ -45,7 +57,7 @@ public class Gamer extends Thread{
             System.out.println("Connect");
 
             //ois = new ObjectInputStream(client.getInputStream());
-            Data msg = new Data();
+            
             try{
 
                 ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
@@ -64,7 +76,7 @@ public class Gamer extends Thread{
             }
 
             try{
-                ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+                ois = new ObjectInputStream(client.getInputStream());
                 Data temp;
                 temp = (Data)ois.readUnshared();
                 if(temp.getDataType() == Data.DataType.WAIT){
@@ -109,28 +121,35 @@ public class Gamer extends Thread{
             });
             outputThread.start();
             //get Server data
-            try{
 
-                while(true){
+            Thread readThread = new Thread(new Runnable(){
+                @Override
+                public void run(){
 
-                    msg = (Data)ois.readUnshared();
-                    synchronized(recieveData){
-                        recieveData.add(msg);
-                            if(recieveData.size() == 1){
-                                recieveData.notify();
-                                System.out.println("notify");
+                    try{
+                        Data msg;
+                        while(true){
+                            msg = (Data)ois.readObject();
+                            synchronized(recieveData){
+                                recieveData.add(msg);
+                                    if(recieveData.size() == 1){
+                                        recieveData.notify();
+                                        System.out.println("notify");
+                                    }
                             }
+                            //log
+                            System.out.println("getMSG");
+                            int x = msg.getX();
+                            System.out.println("get " + x);
+                            //update the game frame
+                            //
+                        }
+                    }catch(Exception e){
+                        e.printStackTrace();
                     }
-                    //log
-                    int x = msg.getX();
-                    System.out.println("get " + x);
-                    //update the game frame
-                    //
                 }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            
+            });
+            readThread.start();
 
         }catch(UnknownHostException e){
             showErrorMessage("Something is wrong", "Server does not response");

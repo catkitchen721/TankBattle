@@ -41,6 +41,7 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		g1 = new Gamer();
 		g1.start();
 		player1 = display.player1;
+		player2 = display.player2;
 		if(!g1.isWait)
 			display.addPlayer2();
 //			player2 = display.player2;
@@ -57,7 +58,10 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 						}
 					}
 					p2Data = g1.updateFrame();
+					System.out.println(p2Data.getX());
 					player2.update(p2Data);
+					if(p2Data.getShoot())
+						player2.shoot();
 				}
 			}
 		});
@@ -119,7 +123,6 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		{
 			x += BOX_WIDTH;
 		}
-		System.out.println("X: " + x + "Y: " + y);
 		int mapi = (x-10) / BOX_WIDTH;
 		int mapj = (y-10) / BOX_WIDTH;
 		int mapValue = Character.getNumericValue(map[mapj][mapi]);
@@ -165,6 +168,7 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 	
 	
 	public void keyPressed(KeyEvent e) {
+		
 		
 		allowKeypress = (System.currentTimeMillis() - keyInitialTime > 50)? true: false;
 		keyInitialTime = System.currentTimeMillis();
@@ -219,11 +223,13 @@ public class Board extends JFrame implements KeyListener, ActionListener {
     public void actionPerformed(ActionEvent e) {
     	g1.updateData(player1.data);
     	bulletMove(player1, player2);
-    	display.update(display.getGraphics());
+    	bulletMove(player2, player1);
+    	
     	if(playerForwarding && isMovable(player1, player2, Direction.UP)) playerMoving(Direction.UP);
     	if(playerBacking && isMovable(player1, player2, Direction.DOWN)) playerMoving(Direction.DOWN);
     	if(playerLefting && isMovable(player1, player2, Direction.LEFT)) playerMoving(Direction.LEFT);
     	if(playerRighting && isMovable(player1,player2,  Direction.RIGHT)) playerMoving(Direction.RIGHT);
+    	display.update(display.getGraphics());
     }
   
     public void bulletMove(Player player1, Player player2) {

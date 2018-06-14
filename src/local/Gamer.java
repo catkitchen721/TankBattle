@@ -85,13 +85,14 @@ public class Gamer extends Thread{
                                 while(dataQ.isEmpty()){
                                     dataQ.wait();
                                 }
-                                System.out.println("dataQ is not empty");
+                                //System.out.println("dataQ is not empty");
                                 temp = dataQ.poll();
                             }
-                            System.out.println(temp.getX());
+                            System.out.println("send");
                             //sending data
                             oos.reset();
                             oos.writeUnshared(temp);
+                            oos.flush();
                             
                         }
                     }catch(Exception e){
@@ -110,7 +111,7 @@ public class Gamer extends Thread{
                         recieveData.add(msg);
                             if(recieveData.size() == 1){
                                 recieveData.notify();
-                                System.out.println("notify");
+                                //fSystem.out.println("notify");
                             }
                     }
                     //log
@@ -145,12 +146,12 @@ public class Gamer extends Thread{
     //use for game update player data for sending to server
     public void updateData(Data data){
         
-        System.out.println("updateData "+data.getX());
+        //System.out.println("updateData "+data.getX());
         synchronized(dataQ){
             dataQ.add(data);
             if(dataQ.size() == 1){
                 dataQ.notify();
-                System.out.println("Notify thread");
+                //System.out.println("Notify thread");
             }
         }
     }

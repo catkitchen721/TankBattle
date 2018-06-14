@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 
 public class Data implements Serializable{
-	private static final long serialVersionUID = 2218706848770106240L;
+	private static final long serialVersionUID = 6899636466339053193L;
 	public static enum DataType{FIRST,ACCEPT,UPDATE,WAIT,START,REJECT,GAMEOVER};
 	public int player_num;
 	private DataType datatype;
