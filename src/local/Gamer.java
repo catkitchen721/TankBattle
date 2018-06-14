@@ -12,12 +12,11 @@ public class Gamer extends Thread{
     private String HOST = "192.168.43.125";
     private static int PORT = 3000;
     private Queue<Data> dataQ;
-    private Queue<Data> recieveData;
+    public Queue<Data> recieveData;
     private boolean singleGame;
     private int roomNum;
     public boolean isWait;
-    
-    public Gamer(){
+    public Gamer() {
         ClientClosed = false;
         dataQ = new LinkedList<Data>();
         recieveData = new LinkedList<Data>();
@@ -25,6 +24,7 @@ public class Gamer extends Thread{
     }
     @Override
     public void run(){
+
         if(ClientClosed == true)
             return;
 
@@ -35,7 +35,7 @@ public class Gamer extends Thread{
             System.out.println("Connect");
 
             //ois = new ObjectInputStream(client.getInputStream());
-            Data msg = new Data();
+            
             try{
 
                 ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
@@ -54,7 +54,7 @@ public class Gamer extends Thread{
             }
 
             try{
-                ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+                ois = new ObjectInputStream(client.getInputStream());
                 Data temp;
                 temp = (Data)ois.readUnshared();
                 if(temp.getDataType() == Data.DataType.WAIT){
@@ -85,14 +85,13 @@ public class Gamer extends Thread{
                                 while(dataQ.isEmpty()){
                                     dataQ.wait();
                                 }
-                                //System.out.println("dataQ is not empty");
+//                                System.out.println("dataQ is not empty");
                                 temp = dataQ.poll();
                             }
-                            System.out.println("send");
+//                            System.out.println(temp.getX());
                             //sending data
                             oos.reset();
                             oos.writeUnshared(temp);
-                            oos.flush();
                             
                         }
                     }catch(Exception e){
@@ -102,28 +101,35 @@ public class Gamer extends Thread{
             });
             outputThread.start();
             //get Server data
-            try{
 
-                while(true){
+            Thread readThread = new Thread(new Runnable(){
+                @Override
+                public void run(){
 
-                    msg = (Data)ois.readUnshared();
-                    synchronized(recieveData){
-                        recieveData.add(msg);
-                            if(recieveData.size() == 1){
-                                recieveData.notify();
-                                //fSystem.out.println("notify");
+                    try{
+                        Data msg;
+                        while(true){
+                            msg = (Data)ois.readObject();
+                            synchronized(recieveData){
+                                recieveData.add(msg);
+                                if(recieveData.size() == 1){
+                                    recieveData.notify();
+//                                    System.out.println("Notify thread");
+                                }
                             }
+                            //log
+//                            System.out.println("getMSG");
+                            //int x = msg.getX();
+                            //System.out.println("get " + x);
+                            //update the game frame
+                            //
+                        }
+                    }catch(Exception e){
+                        e.printStackTrace();
                     }
-                    //log
-                    int x = msg.getX();
-                    System.out.println("get " + x);
-                    //update the game frame
-                    //
                 }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            
+            });
+            readThread.start();
 
         }catch(UnknownHostException e){
             showErrorMessage("Something is wrong", "Server does not response");
@@ -146,12 +152,12 @@ public class Gamer extends Thread{
     //use for game update player data for sending to server
     public void updateData(Data data){
         
-        //System.out.println("updateData "+data.getX());
+//        System.out.println("updateData "+data.getX());
         synchronized(dataQ){
             dataQ.add(data);
             if(dataQ.size() == 1){
                 dataQ.notify();
-                //System.out.println("Notify thread");
+//                System.out.println("Notify thread");
             }
         }
     }
@@ -169,13 +175,14 @@ public class Gamer extends Thread{
     public void waitRecieveData() throws Exception{
         recieveData.wait();
     }
-    public boolean p2DataisEmpty() {
-    	return recieveData.isEmpty();
-    }
     public void setSingleGame(boolean flag){
         this.singleGame = flag;
     }
     public void setRoomNum(int num){
         this.roomNum = num;
     }
+	public boolean p2DataisEmpty() {
+		return recieveData.isEmpty();
+	}
+    
 }

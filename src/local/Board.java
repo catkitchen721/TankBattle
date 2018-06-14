@@ -48,23 +48,27 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while(true) {
-					while(g1.p2DataisEmpty()) {
-						try {
-							g1.waitRecieveData();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+				Data temp;
+				synchronized(g1.recieveData) {
+					while(true) {
+						while(g1.recieveData.isEmpty()) {
+							try {
+								g1.recieveData.wait();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
+						temp = g1.recieveData.poll();
+						System.out.println("P2DATA");
+						player2.update(temp);
+						if(temp.getShoot())
+							player2.shoot();
 					}
-					p2Data = g1.updateFrame();
-					System.out.println(p2Data.getX());
-					player2.update(p2Data);
-					if(p2Data.getShoot())
-						player2.shoot();
 				}
 			}
 		});
+		t.start();
 		loadMap();
 		
 		pack();

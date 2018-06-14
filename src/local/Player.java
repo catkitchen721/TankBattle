@@ -54,7 +54,6 @@ public class Player extends Tank{
 	
 	@Override
 	public void shoot() {
-		System.out.println("shoooo");
 		if(data.getDirect() == Direction.UP)
 			bullets.add(new Bullet(data.getX(), data.getY() - PER_MOVE, this));			
 		else if(data.getDirect() == Direction.DOWN)
