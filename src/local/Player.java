@@ -65,7 +65,7 @@ public class Player extends Tank{
 			bullets.add(new Bullet(data.getX() + PER_MOVE, data.getY(), this));			
 	}
 	
-	public void hit() {
+	public void getHit() {
 		data.setHp(data.getHp() - 5);
 		System.out.println("Hp: " + data.getHp());
 	}

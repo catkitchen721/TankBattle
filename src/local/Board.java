@@ -76,13 +76,13 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		}
 	}
 	
-	public boolean isMovable(Player player, Direction d) {
+	public boolean isMovable(Player player, Player player2, Direction d) {
 		int x = player1.data.getX();
 		int y = player1.data.getY();
 
 		if(d == Direction.UP)
 		{
-			y -= BOX_WIDTH;
+			y -= player.PER_MOVE;
 		}
 		else if(d == Direction.DOWN)
 		{
@@ -90,18 +90,23 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		}
 		else if(d == Direction.LEFT)
 		{
-			x -= BOX_WIDTH;
+			x -= player.PER_MOVE;
 		}
 		else if(d == Direction.RIGHT)
 		{
 			x += BOX_WIDTH;
 		}
-		int mapi = (x-10) / BOX_WIDTH, mapj = (y -10) / BOX_WIDTH;
+		System.out.println("X: " + x + "Y: " + y);
+		int mapi = (x-10) / BOX_WIDTH;
+		int mapj = (y-10) / BOX_WIDTH;
 		int mapValue = Character.getNumericValue(map[mapj][mapi]);
 		
 		if(mapValue == 2) {
 			return false;
 		}
+//		else if(player.getBound().intersects(player2.getBound())){
+//			return false;
+//		}
 		else return true;
 	}
 	
@@ -126,21 +131,15 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		{
 			x += BOX_WIDTH;
 		}
-		int mapi = (x-10) / BOX_WIDTH, mapj = (y -10) / BOX_WIDTH;
+		int mapi = (x-10) / BOX_WIDTH;
+		int mapj = (y-10) / BOX_WIDTH;
 		int mapValue = Character.getNumericValue(map[mapj][mapi]);
-		
 		if(mapValue == 2) {
 			return false;
 		}
 		else return true;
 	}
 	
-	public boolean isHit(int x, int y, Player player) {
-		Rectangle playerRectangle = player.getBound();
-		
-		
-		return false;
-	}
 	
 	public void keyPressed(KeyEvent e) {
 		
@@ -150,22 +149,22 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		if(allowKeypress)
 		{
 			if (e.getKeyCode() == KeyEvent.VK_W) {
-				if(isMovable(player1, Direction.UP)) {
+				if(isMovable(player1, player2, Direction.UP)) {
 					playerForwarding = true;
 				}
 			}
 			else if (e.getKeyCode() == KeyEvent.VK_S) {
-				if(isMovable(player1, Direction.DOWN)) {
+				if(isMovable(player1, player2, Direction.DOWN)) {
 					playerBacking = true;
 				}
 			}
 			else if (e.getKeyCode() == KeyEvent.VK_D) {
-				if(isMovable(player1, Direction.RIGHT)) {
+				if(isMovable(player1, player2, Direction.RIGHT)) {
 					playerRighting = true;
 				}
 			}
 			else if (e.getKeyCode() == KeyEvent.VK_A) {
-				if(isMovable(player1, Direction.LEFT)) {
+				if(isMovable(player1, player2, Direction.LEFT)) {
 					playerLefting = true;
 				}
 			}
@@ -195,16 +194,21 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 	}
 	
     public void actionPerformed(ActionEvent e) {
-    	bulletMove(player1);
+    	bulletMove(player1, player2);
     	display.update(display.getGraphics());
-    	if(playerForwarding && isMovable(player1, Direction.UP)) playerMoving(Direction.UP);
-    	if(playerBacking && isMovable(player1, Direction.DOWN)) playerMoving(Direction.DOWN);
-    	if(playerLefting && isMovable(player1, Direction.LEFT)) playerMoving(Direction.LEFT);
-    	if(playerRighting && isMovable(player1, Direction.RIGHT)) playerMoving(Direction.RIGHT);
+    	if(playerForwarding && isMovable(player1, player2, Direction.UP)) playerMoving(Direction.UP);
+    	if(playerBacking && isMovable(player1, player2, Direction.DOWN)) playerMoving(Direction.DOWN);
+    	if(playerLefting && isMovable(player1, player2, Direction.LEFT)) playerMoving(Direction.LEFT);
+    	if(playerRighting && isMovable(player1,player2,  Direction.RIGHT)) playerMoving(Direction.RIGHT);
     }
-    
-    public void bulletMove(Player player) {
-		for(Bullet element : player.getBullet()) {
+  
+    public void bulletMove(Player player1, Player player2) {
+		for(Bullet element : player1.getBullet()) {
+			if(element.getBound().intersects(player2.getBound())) {
+				System.out.println("got hit");
+				player2.getHit();
+				element.setVisible(false);
+			}
 			if(isMovable(element)) 
 				element.move();
 			else
@@ -219,30 +223,4 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		display.update(display.getGraphics());
     }
 	
-//	private class playerAction implements KeyListener {
-//		@Override
-//		public void keyTyped(KeyEvent e) {
-//	
-//			if (e.getKeyCode() == KeyEvent.VK_W) {
-//				
-//				System.out.println("Right key typed");
-//			}
-//	
-//		}
-//	
-//		@Override
-//		public void keyPressed(KeyEvent e) {
-//			if (e.getKeyCode() == KeyEvent.VK_W) {
-//				System.out.println("Right key pressed");
-//			}
-//	
-//		}
-//	
-//		@Override
-//		public void keyReleased(KeyEvent e) {
-//			if (e.getKeyCode() == KeyEvent.VK_W) {
-//				System.out.println("Right key Released");
-//			}
-//		}
-//	}
 }

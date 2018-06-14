@@ -55,7 +55,6 @@ public class Display extends Canvas {
 			map = ReadData.readFromFile("resource/map.txt");
 		} catch (Exception e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -116,6 +115,7 @@ public class Display extends Canvas {
 				
 			}
 		}
+		
 	}
 	public void drawPlayer(Graphics g, Player player) {
 		Graphics2D g2d = (Graphics2D) g;
@@ -162,6 +162,8 @@ public class Display extends Canvas {
 		player1AppearFlag = true;
 		player1.data.setX(260);
 		player1.data.setY(110);
+		System.out.println("x: " + player1.getBound().x);
+		System.out.println("y: " + player1.getBound().y);
 	}
 	
 	public void addPlayer2()

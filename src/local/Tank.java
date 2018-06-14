@@ -11,6 +11,7 @@ public abstract class Tank {
 	protected Data data = null;
 	private Gamer gamer = null;
 	public static final int PER_MOVE = 10;
+	public static final int SIZE = 50;
 	
 	public Tank()
 	{
@@ -31,7 +32,7 @@ public abstract class Tank {
 	}
 	
 	public Rectangle getBound() {
-		return new Rectangle(data.getX(), data.getY(), PER_MOVE, PER_MOVE);
+		return new Rectangle(data.getX(), data.getY(), SIZE, SIZE);
 	}
 	
 	public abstract void move(Direction d);
