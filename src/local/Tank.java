@@ -10,7 +10,7 @@ public abstract class Tank {
 	
 	protected Data data = null;
 	private Gamer gamer = null;
-	public static final int PER_MOVE = 50;
+	public static final int PER_MOVE = 10;
 	
 	public Tank()
 	{

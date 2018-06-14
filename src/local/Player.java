@@ -9,9 +9,10 @@ public class Player extends Tank{
 	
     private List<Bullet> bullets;
 
-	public Player()
+	public Player(int num)
 	{
 		super();
+		data.player_num = num;
 		System.out.println("One player created.");
 		bullets = new ArrayList<>();
 	}
@@ -62,6 +63,11 @@ public class Player extends Tank{
 			bullets.add(new Bullet(data.getX() - PER_MOVE, data.getY(), this));
 		else if(data.getDirect() == Direction.RIGHT)
 			bullets.add(new Bullet(data.getX() + PER_MOVE, data.getY(), this));			
+	}
+	
+	public void hit() {
+		data.setHp(data.getHp() - 5);
+		System.out.println("Hp: " + data.getHp());
 	}
 
 }

@@ -1,4 +1,4 @@
-package Player;
+package local;
 import java.net.*;
 import java.io.*;
 import java.util.*;

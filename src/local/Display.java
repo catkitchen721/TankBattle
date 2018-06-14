@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.awt.Graphics2D;
+import local.Status.Direction;
+
 
 import javax.imageio.ImageIO;
 
@@ -23,11 +25,17 @@ public class Display extends Canvas {
 	private BufferedImage wall;
 	private BufferedImage tankP1;
 	private BufferedImage bullet;
-	
+	private BufferedImage tankP1_R;
+	private BufferedImage tankP1_L;
+	private BufferedImage tankP1_U;
+	private BufferedImage tankP1_D;
 	private BufferStrategy bs;
 	
-	public Player player1;
+	public Player player1 = new Player(1);
+	public Player player2 = new Player(2);
+
 	public boolean player1AppearFlag = false;
+	public boolean player2AppearFlag = false;
 
 	public Display()
 	{	
@@ -35,6 +43,7 @@ public class Display extends Canvas {
 		loadImages();
 		
 		addPlayer1();
+		addPlayer2();
 		repaint();
 	}
 	
@@ -67,9 +76,16 @@ public class Display extends Canvas {
         if(player1AppearFlag) {
 			drawPlayer(g2d, player1);
 		}
+        if(player2AppearFlag) {
+			drawPlayer(g2d, player2);
+		}
         
         if(!player1.getBullet().isEmpty()) {
         	drawBullets(g2d, player1);
+        }
+        
+        if(!player2.getBullet().isEmpty()) {
+        	drawBullets(g2d, player2);
         }
         
         bs.show();
@@ -103,19 +119,34 @@ public class Display extends Canvas {
 	}
 	public void drawPlayer(Graphics g, Player player) {
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(tankP1, player.data.getX(), player.data.getY(), BOX_WIDTH, BOX_WIDTH, null);
+		if(player.data.getDirect() == Direction.UP) {
+			g2d.drawImage(tankP1_U, player.data.getX(), player.data.getY(), BOX_WIDTH, BOX_WIDTH, null);
+		}
+		else if(player.data.getDirect() == Direction.DOWN) {
+			g2d.drawImage(tankP1_D, player.data.getX(), player.data.getY(), BOX_WIDTH, BOX_WIDTH, null);
+		}
+		else if(player.data.getDirect() == Direction.LEFT) {
+			g2d.drawImage(tankP1_L, player.data.getX(), player.data.getY(), BOX_WIDTH, BOX_WIDTH, null);
+		}
+		else if(player.data.getDirect() == Direction.RIGHT) {
+			g2d.drawImage(tankP1_R, player.data.getX(), player.data.getY(), BOX_WIDTH, BOX_WIDTH, null);
+		}
 	}
 	public void drawBullets(Graphics g, Player player) {
 		Graphics2D g2d = (Graphics2D) g;
 		for(Bullet element : player.getBullet()) {
 			if(element.getVisible())
-				g2d.drawImage(bullet, element.data.getX(), element.data.getY(), 10, 10, null);
+				g2d.drawImage(bullet, element.data.getX() + 25, element.data.getY(), 10, 10, null);
 		}
 	}
 	
 	
 	public void loadImages() {
 		try {
+			tankP1_R = ImageIO.read(new File("resource/player1_R.png"));
+			tankP1_D = ImageIO.read(new File("resource/player1_D.png"));
+			tankP1_U = ImageIO.read(new File("resource/player1_U.png"));
+			tankP1_L = ImageIO.read(new File("resource/player1_L.png"));
 			grass = ImageIO.read(new File("resource/grass.jpg"));
 			wall = ImageIO.read(new File("resource/wall.jpg"));
 			tankP1 = ImageIO.read(new File("resource/player1.png"));
@@ -129,9 +160,15 @@ public class Display extends Canvas {
 	public void addPlayer1()
 	{
 		player1AppearFlag = true;
-		player1 = new Player();
 		player1.data.setX(260);
 		player1.data.setY(110);
+	}
+	
+	public void addPlayer2()
+	{
+		player2AppearFlag = true;
+		player2.data.setX(260);
+		player2.data.setY(160);
 	}
 	
 	public void update(Graphics g)

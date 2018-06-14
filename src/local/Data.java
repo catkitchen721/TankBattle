@@ -7,6 +7,7 @@ import local.Status.Direction;
 
 public class Data{
 	public static enum DataType{ACCEPT,Update,GAMESTART,REJECT,GAMEOVER};
+	public int player_num;
 	private DataType datatype;
 	private int x;
 	private int y;

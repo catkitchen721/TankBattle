@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Rectangle;
 
 
 public class Board extends JFrame implements KeyListener, ActionListener {
@@ -35,6 +36,7 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		display = new Display();
 		add(display);
 		player1 = display.player1;
+		player2 = display.player2;
 		
 		loadMap();
 		
@@ -47,7 +49,7 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 		addKeyListener(this);
 		display.addKeyListener(this);
 		
-		timer = new Timer(150, this);
+		timer = new Timer(30, this);
 		timer.start();
 		
 		allowKeypress = false;
@@ -131,6 +133,13 @@ public class Board extends JFrame implements KeyListener, ActionListener {
 			return false;
 		}
 		else return true;
+	}
+	
+	public boolean isHit(int x, int y, Player player) {
+		Rectangle playerRectangle = player.getBound();
+		
+		
+		return false;
 	}
 	
 	public void keyPressed(KeyEvent e) {

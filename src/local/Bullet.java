@@ -6,12 +6,15 @@ import local.Status.Direction;
 public class Bullet {
 	protected Data data = null;
 	public static final int PER_MOVE = 50;
-	public static final int SPEED = 5;
+	public static final int SPEED = 20;
+	//public int player_num;
 	private boolean visible = true;
+	
 
 	
 	Bullet(int x, int y, Player player) {
 		data = new Data();
+		data.player_num = player.data.player_num;
 		data.setX(x);
 		data.setY(y);
 		data.setDirect(player.data.getDirect());
@@ -20,6 +23,7 @@ public class Bullet {
 	public void move() {
 		int x = data.getX();
 		int y = data.getY();
+		
 		if(data.getDirect() == Direction.UP)
 			data.setY(y - SPEED);
 		else if(data.getDirect() == Direction.DOWN)
